@@ -1,0 +1,76 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+
+// 배열을 오름차 순으로 정렬
+void swap(int *arr){
+    for (int i = 1; i < 6; i++){
+        int temp = 0;
+        for (int j = 0; j < i; j++){
+            if (arr[i]<arr[j]){
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+}
+
+// 배열 출력
+void print(int *arr){
+    for (int i = 0; i < 6; i++){
+        printf("%d\t", arr[i]);
+    }
+}
+
+// 연속된 숫자를 포함한 무작위 번호 6개 추출
+int extract(int arr[6]){
+    srand((unsigned int)time(NULL));    
+    
+    arr[0] = rand()%45+1;
+    if (arr[0]==45){
+        arr[1]=44;
+    }
+    else
+        arr[1] = arr[0]+1;
+
+    for (int i = 2; i < 6; i++){
+        arr[i] = rand()%45+1;
+    }
+    swap(arr); // 추출된 번호 정렬하는 함수 호출
+    return arr;
+}
+
+void lotto(){
+    int arr[6] = {0, 0, 0, 0, 0, 0}; // 배열 초기화
+    extract(arr); // 무작위 번호 추출
+    // print(arr);      // 뽑힌 번호 확인하려면 
+    // printf("\n");    // 두줄 맨 앞의 '//' 제거
+    for (int i = 0; i < 6; i++){
+        if (arr[i]==0){     // arr[i]가 0이면
+            extract(arr);   // 다시 추출
+            i=0;    // for문을 처음부터
+        }
+        int count = 0;
+        for (int j = 0; j < i; j++){
+            if (arr[j+1]==arr[j]+1){    // 연속된 숫자가 존재하면
+                count++;                // count 1 증가
+            }
+            else if (arr[j+1]==arr[j]){ // 같은 숫자가 존재하면
+                count=2;                // count 2 증가
+            }
+            else            // 연속된 숫자가 아니라면
+                count=0;    // count를 0으로 초기화 해주어야 연속된 숫자쌍이 여러개일 때 트리거를 발동시키지 않음
+
+            if (count==2){  // count가 2가 되면
+                arr[i]=0;   // arr[i]을 0으로 만듬 (다시 추출)
+                i--;        // i--를 해줘야 for문의 i++와 상쇄되어 추출하지 않고 넘어가지 않음
+            }
+        }
+    }
+    print(arr); // 배열을 출력하는 함수 호출
+}
+
+void main(int argc, char const *argv[]){
+    lotto(); // 번호 추출한 뒤 조건에 부합하는지 확인하고 출력하는 함수 호출
+}
